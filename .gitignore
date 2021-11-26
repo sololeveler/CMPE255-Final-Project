@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 gitUpload.ipynb
-
-=======
->>>>>>> cb1fefed2da4b930f75b8cf8673ad4091fe6c7de
+node_modules
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
