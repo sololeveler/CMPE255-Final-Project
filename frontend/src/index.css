@@ -1,5 +1,11 @@
+html,body{
+  width:280px !important;
+  height:350px !important;
+  margin:0 !important;
+  border: 1px black solid;
+}
+
 body {
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
