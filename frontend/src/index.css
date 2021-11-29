@@ -1,8 +1,7 @@
-html,body{
+html,body,#root{
   width:280px !important;
   height:350px !important;
   margin:0 !important;
-  border: 1px black solid;
 }
 
 body {
@@ -11,6 +10,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#header{
+  background-color: skyblue;
+  color: white
 }
 
 code {
