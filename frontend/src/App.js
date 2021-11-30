@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, TextField, Button, Grid, Backdrop, CircularProgress } from '@mui/material';
-const dotenv = require('dotenv')
+// import env from "react-dotenv"
+import dotenv from 'dotenv'
+
 var axios = require('axios');
 
 const style = {
@@ -16,55 +18,39 @@ class App extends React.Component {
       site_url: "",
       feed_url: "",
       // accuracy: { type: "", value: 0 }, 
-      result: -1 // -1 nothing, 0 spam, 1 not spam
+      result: -1 // -1 nothing, 0 not spam, 1 spam
     }
   }
   urlFetcher = () => {
-    // let url = "";
-    // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    //   console.log(request)
-    //   if (request.message === "RECIEVE URL") {
-    //     this.setState({ site_url: request.url, feed_url: request.url })
-    //   }
-    // })
-    // chrome.runtime.sendMessage({ message: "GET URL" })
-    // this.setState({ site_url: url, feed_url: url })
+    let url = "";
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.message === "RECIEVE URL") {
+        this.setState({ site_url: request.url, feed_url: request.url })
+      }
+    })
+    chrome.runtime.sendMessage({ message: "GET URL" })
+    this.setState({ site_url: url, feed_url: url })
   }
 
   onChangeUrl = (event) => {
-    console.log(event.target.value)
     this.setState({ feed_url: event.target.value })
   }
 
   checkUrl = (url) => {
     this.setState({ loading: true }, () => {
 
-      const baseUrl = "http://ec2-18-223-235-149.us-east-2.compute.amazonaws.com/predict/?url="
       const config = {
         method: 'get',
-        url: baseUrl + url,
+        url: process.env.REACT_APP_AWS_PRED_URL + url,
         headers: { "Access-Control-Allow-Origin": "*" }
       };
       axios(config)
         .then(response => {
           console.log(response);
-          console.log(response)
-          this.setState({ loading: false, result: response.result })
+          this.setState({ loading: false, result: response.data.output[0] })
           //Condition if it is phising website or not, Also what is accuracy for the result 
-        })
-      var conf = {
-        method: 'get',
-        url: 'http://ec2-18-223-235-149.us-east-2.compute.amazonaws.com/predict/?url=www.goooogle.com',
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-      };
-      axios(conf)
-        .then(function (response) {
-          console.log(response)
-          this.setState({ loading: false, result: response.result })
-        })
-    })
+        });
+    });
   }
 
   componentDidMount() {
@@ -91,11 +77,11 @@ class App extends React.Component {
               <TextField fullWidth InputProps={style} id="url_input" placeholder="URL Input" label="URL Input" variant="outlined" onChange={this.onChangeUrl} value={feed_url} />
               :
               <>
-                result === 0
-                ?
-                <h4>It is a Phishing Website</h4>
-                :
-                <h4>Not A Phishing Webite</h4>
+                {result === 1
+                  ?
+                  <h4>It is a Phishing Website</h4>
+                  :
+                  <h4>Not A Phishing Webite</h4>}
               </>
             }
           </Box>
@@ -107,7 +93,7 @@ class App extends React.Component {
                 <Button variant="contained" onClick={() => this.checkUrl(feed_url)}>From TextBox</Button>
               </>
               :
-              <Button variant="outlined" onClick={this.setState({ result: -1 })} >Back</Button>
+              <Button variant="outlined" onClick={() => { this.setState({ result: -1, feed_url: site_url }) }} >Back</Button>
             }
           </Box>
         </Box>
